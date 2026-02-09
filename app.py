@@ -24,10 +24,11 @@ body {
     padding: 25px;
     border: 1px solid rgba(0,255,180,0.25);
     box-shadow: 0 0 25px rgba(0,255,180,0.15);
-    margin-bottom: 25px;
+    margin-bottom: 55px;
 }
 h1, h2, h3 {
     color: #00ffcc;
+    margin-bottom: 20px;
 }
 label, p, span {
     color: #d6fff6 !important;
