@@ -32,12 +32,12 @@ h1, h2, h3 {
 label, p, span {
     color: #d6fff6 !important;
 }
-.stSlider > div {
-    color: #00ffcc;
-}
 </style>
 """, unsafe_allow_html=True)
 
+# =========================
+# MAIN INPUT SECTION
+# =========================
 st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
 st.title("🧠 Customer Segmentation")
@@ -46,18 +46,20 @@ st.caption("K-Means clustering on mall customer data")
 scaler = joblib.load("scaler.pkl")
 model = joblib.load("model.pkl")
 
-income = st.slider(
+income = st.number_input(
     "💰 Annual Income (k$)",
     min_value=0,
     max_value=150,
-    value=50
+    value=50,
+    step=10
 )
 
-spending = st.slider(
+spending = st.number_input(
     "🛍️ Spending Score (1–100)",
     min_value=1,
     max_value=100,
-    value=50
+    value=50,
+    step=10
 )
 
 input_data = np.array([[income, spending]])
@@ -79,8 +81,9 @@ st.markdown(f"""
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
-
+# =========================
+# VISUALIZATION SECTION
+# =========================
 st.markdown("<div class='glass'>", unsafe_allow_html=True)
 st.subheader("📊 Cluster Visualization")
 
@@ -88,7 +91,7 @@ df = pd.read_csv("Mall_Customers.csv")
 x = df[['Annual Income (k$)', 'Spending Score (1-100)']]
 df['Cluster'] = model.predict(scaler.transform(x))
 
-fig, ax = plt.subplots(figsize=(6,5))
+fig, ax = plt.subplots(figsize=(6, 5))
 
 for i in range(5):
     ax.scatter(
@@ -105,15 +108,26 @@ ax.scatter(
     c='#00ffcc',
     edgecolors='black',
     marker='X',
-    label='You'
+    label='Your Input'
 )
 
 ax.set_facecolor("#000000")
 fig.patch.set_facecolor("#000000")
+
 ax.set_xlabel("Annual Income (k$)", color="#00ffcc")
 ax.set_ylabel("Spending Score", color="#00ffcc")
 ax.tick_params(colors="#d6fff6")
-ax.legend(facecolor="#000000", edgecolor="#00ffcc")
 
-st.pyplot(fig)
+# ✅ legend moved outside (no overlay)
+legend = ax.legend(
+    loc="center left",
+    bbox_to_anchor=(1.02, 0.5),
+    facecolor="#000000",
+    edgecolor="#00ffcc"
+)
+
+for text in legend.get_texts():
+    text.set_color("#d6fff6")
+
+st.pyplot(fig, use_container_width=True)
 st.markdown("</div>", unsafe_allow_html=True)
