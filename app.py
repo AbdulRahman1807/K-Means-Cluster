@@ -56,6 +56,12 @@ for i, (income_c, spending_c) in enumerate(centers):
         label = "Low Income • Low Spending"
 
     cluster_names[i] = label
+customer_insights = {
+    "High Income • High Spending (Target)": "Prefers premium products, brand value, and quality. Less price-sensitive.",
+    "High Income • Low Spending": "Financially capable but cautious. Prioritizes value and long-term utility.",
+    "Low Income • High Spending": "Emotion-driven buyer. Prioritizes trends, experiences, and instant gratification.",
+    "Low Income • Low Spending": "Highly price-sensitive. Focuses on essentials and discounts."
+}
 
 
 st.title("🧠 Customer Segmentation")
@@ -85,7 +91,12 @@ st.markdown(f"""
 ### 🎯 Predicted Segment
 **<span style='color:#00ffcc;font-size:24px'>{cluster_names[cluster]}</span>**
 """, unsafe_allow_html=True)
-
+st.markdown(f"""
+### 🧩 Type of Customer
+<span style='color:#d6fff6;font-size:16px'>
+{customer_insights[cluster_names[cluster]]}
+</span>
+""", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
 st.subheader("📊 Cluster Visualization")
