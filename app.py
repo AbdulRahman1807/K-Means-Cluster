@@ -57,7 +57,6 @@ for i, (income_c, spending_c) in enumerate(centers):
 
     cluster_names[i] = label
 
-st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
 st.title("🧠 Customer Segmentation")
 st.caption("K-Means clustering on mall customer data")
@@ -89,7 +88,6 @@ st.markdown(f"""
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='glass'>", unsafe_allow_html=True)
 st.subheader("📊 Cluster Visualization")
 
 df = pd.read_csv("Mall_Customers.csv")
