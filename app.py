@@ -32,6 +32,11 @@ h1, h2, h3 {
 label, p, span {
     color: #d6fff6 !important;
 }
+header {
+    visibility: hidden;
+    height: 0px;
+}
+            
 </style>
 """, unsafe_allow_html=True)
 
