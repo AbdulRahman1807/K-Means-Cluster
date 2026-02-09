@@ -9,7 +9,6 @@ st.set_page_config(
     page_icon="🧠",
     layout="centered"
 )
-
 st.markdown("""
 <style>
 body {
@@ -25,6 +24,7 @@ body {
     padding: 25px;
     border: 1px solid rgba(0,255,180,0.25);
     box-shadow: 0 0 25px rgba(0,255,180,0.15);
+    margin-bottom: 25px;
 }
 h1, h2, h3 {
     color: #00ffcc;
@@ -36,27 +36,38 @@ header {
     visibility: hidden;
     height: 0px;
 }
-            
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
-# MAIN INPUT SECTION
-# =========================
+scaler = joblib.load("scaler.pkl")
+model = joblib.load("model.pkl")
+
+centers = scaler.inverse_transform(model.cluster_centers_)
+cluster_names = {}
+
+for i, (income_c, spending_c) in enumerate(centers):
+    if income_c > 70 and spending_c > 60:
+        label = "High Income • High Spending (Target)"
+    elif income_c > 70 and spending_c <= 60:
+        label = "High Income • Low Spending"
+    elif income_c <= 70 and spending_c > 60:
+        label = "Low Income • High Spending"
+    else:
+        label = "Low Income • Low Spending"
+
+    cluster_names[i] = label
+
 st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
 st.title("🧠 Customer Segmentation")
 st.caption("K-Means clustering on mall customer data")
-
-scaler = joblib.load("scaler.pkl")
-model = joblib.load("model.pkl")
 
 income = st.number_input(
     "💰 Annual Income (k$)",
     min_value=0,
     max_value=150,
     value=50,
-    step=10
+    step=5
 )
 
 spending = st.number_input(
@@ -64,31 +75,20 @@ spending = st.number_input(
     min_value=1,
     max_value=100,
     value=50,
-    step=10
+    step=5
 )
 
 input_data = np.array([[income, spending]])
 scaled_input = scaler.transform(input_data)
 cluster = model.predict(scaled_input)[0]
 
-cluster_names = {
-    0: "High Income • Low Spending",
-    1: "Average Income • Average Spending",
-    2: "High Income • High Spending (Target)",
-    3: "Low Income • High Spending",
-    4: "Low Income • Low Spending"
-}
-
 st.markdown(f"""
 ### 🎯 Predicted Segment
-**<span style='color:#00ffcc;font-size:24px'>{cluster_names.get(cluster)}</span>**
+**<span style='color:#00ffcc;font-size:24px'>{cluster_names[cluster]}</span>**
 """, unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# =========================
-# VISUALIZATION SECTION
-# =========================
 st.markdown("<div class='glass'>", unsafe_allow_html=True)
 st.subheader("📊 Cluster Visualization")
 
@@ -98,7 +98,7 @@ df['Cluster'] = model.predict(scaler.transform(x))
 
 fig, ax = plt.subplots(figsize=(6, 5))
 
-for i in range(5):
+for i in range(model.n_clusters):
     ax.scatter(
         df[df['Cluster'] == i]['Annual Income (k$)'],
         df[df['Cluster'] == i]['Spending Score (1-100)'],
@@ -120,10 +120,9 @@ ax.set_facecolor("#000000")
 fig.patch.set_facecolor("#000000")
 
 ax.set_xlabel("Annual Income (k$)", color="#00ffcc")
-ax.set_ylabel("Spending Score", color="#00ffcc")
+ax.set_ylabel("Spending Score (1-100)", color="#00ffcc")
 ax.tick_params(colors="#d6fff6")
 
-# ✅ legend moved outside (no overlay)
 legend = ax.legend(
     loc="center left",
     bbox_to_anchor=(1.02, 0.5),
