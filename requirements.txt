@@ -1,6 +1,7 @@
+streamlit>=1.30
+altair<5
 numpy
 pandas
 matplotlib
 scikit-learn
 joblib
-streamlit
